@@ -1,0 +1,49 @@
+name: Render SwiftUI View
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:  # Allows manual trigger from GitHub UI
+
+jobs:
+  render:
+    name: Render SwiftUI View on macOS
+    runs-on: macos-latest
+    
+    steps:
+      - name: 🛎️ Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 🔍 Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+      
+      - name: 🎨 Render SwiftUI View
+        run: |
+          echo "Rendering SwiftUI view to image..."
+          echo "Compiling standalone render script for macOS..."
+          # Compile the standalone rendering script for macOS
+          swiftc \
+            -parse-as-library \
+            -target arm64-apple-macos13.0 \
+            RenderStandaloneView.swift \
+            -o RenderViewApp
+          echo "Running render app..."
+          # Run the compiled app
+          ./RenderViewApp
+      
+      - name: 📸 Upload rendered image
+        uses: actions/upload-artifact@v4
+        with:
+          name: rendered-swiftui-view
+          path: rendered-view.png
+          retention-days: 30
+      
+      - name: 📊 Display artifact info
+        run: |
+          echo "✅ Rendering complete!"
+          echo "📁 Artifact location: rendered-view.png"
+          ls -lh rendered-view.png || echo "File not found"
