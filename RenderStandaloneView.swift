@@ -42,7 +42,9 @@ class FavouritePlace: Identifiable, ObservableObject {
         self.odwiedzony = odwiedzony
     }
 }
+    
 
+    
 // Testowy widok karty
 struct PlaceCardPreview: View {
     @ObservedObject var place: FavouritePlace
